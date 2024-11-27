@@ -22,7 +22,7 @@ return {
                 configs.jails = {
                     default_config = {
                         cmd = { GetConfigPath() .. "/external/jails/bin/jails" },
-                        root_dir = lspconfig.util.root_pattern(".git"),
+                        root_dir = lspconfig.util.root_pattern("jails.json", "build.jai", "main.jai"),
                         filetypes = { "jai" },
                         name = "Jails",
                     },
