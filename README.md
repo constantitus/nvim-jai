@@ -2,6 +2,7 @@
 
 
 ### Config structure
+```
 .
 ├── external/
 │   ├── jails/
@@ -15,3 +16,4 @@
 └── queries/
     └── jai/
         └── highlights.scm
+```
