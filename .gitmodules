@@ -1,0 +1,6 @@
+[submodule "external/jails"]
+	path = external/jails
+	url = https://github.com/SogoCZE/Jails
+[submodule "external/tree-sitter-jai"]
+	path = external/tree-sitter-jai
+	url = https://github.com/St0wy/tree-sitter-jai
