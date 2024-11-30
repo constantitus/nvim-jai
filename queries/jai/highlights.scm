@@ -6,20 +6,13 @@
 ] @include
 
 ; Keywords
+; TODO : complete this list
 [
   "struct"
   "enum"
-  "if"
-  "ifx"
-  "else"
-  "case"
-  "for"
-  "while"
-  "break"
-  ; "continue"
   "defer"
-  "cast"
-  "xx"
+  ;"cast"
+  ;"xx"
 ] @keyword
 
 [
@@ -45,8 +38,9 @@
 
 [
   "for"
+  ;"do" I'm not sure jai has do ?
   "while"
-  ; "continue"
+  "continue"
 ] @repeat
 
 ; Variables
@@ -60,6 +54,8 @@
 ; Parameters
 
 (parameter (identifier) @parameter ":" "="? (identifier)? @constant)
+
+(default_parameter (identifier) @parameter ":=")
 
 (call_expression argument: (identifier) @parameter "=")
 
@@ -77,19 +73,29 @@
 
 ((type (identifier) @type.builtin)
   (#any-of? @type.builtin
-    "bool" "int" "string"
-    "s8" "s16" "s32" "s64"
+    "bool"
+    "int" "s8" "s16" "s32" "s64"
     "u8" "u16" "u32" "u64"
-    "Type" "Any"))
+    "string"))
 
 
-(struct_declaration (identifier) @type ":" ":")
+(struct_declaration (identifier) @type "::")
 
-(enum_declaration (identifier) @type ":" ":")
+(enum_declaration (identifier) @type "::")
 
-(const_declaration (identifier) @type ":" ":" [(array_type) (pointer_type)])
+;(union_declaration (identifier) @type "::")
 
-(struct_literal . (identifier) @type)
+(const_declaration (identifier) @type "::" [(array_type) (pointer_type)])
+
+(struct . (identifier) @type)
+
+;(field_type . (identifier) @namespace "." (identifier) @type)
+
+;(bit_set_type (identifier) @type ";")
+
+;(procedure_type (parameters (parameter (identifier) @type)))
+
+;(polymorphic_parameters (identifier) @type)
 
 ((identifier) @type
   (#lua-match? @type "^[A-Z][a-zA-Z0-9]*$")
@@ -99,11 +105,11 @@
 
 (member_expression "." (identifier) @field)
 
-; (struct_type "{" (identifier) @field)
+;(struct_type "{" (identifier) @field)
 
 (struct_field (identifier) @field "="?)
 
-(struct_declaration_field (identifier) @field)
+(field (identifier) @field)
 
 ; Constants
 
@@ -118,6 +124,8 @@
 ; Literals
 
 (number) @number
+
+(float) @float
 
 (string) @string
 
@@ -138,19 +146,21 @@
 ; Operators
 
 [
-  ":"
+  ":="
   "="
   "+"
   "-"
   "*"
   "/"
   "%"
+  "%%"
   ">"
   ">="
   "<"
   "<="
   "=="
   "!="
+  "~="
   "|"
   "~"
   "&"
@@ -173,6 +183,10 @@
   ">>="
   "||="
   "&&="
+  "&~="
+  ;"..="
+  ;"..<"
+  ;"?"
 ] @operator
 
 ; Punctuation
@@ -184,6 +198,7 @@
 [ "[" "]" ] @punctuation.bracket
 
 [
+  "::"
   "->"
   "."
   ","
@@ -194,13 +209,10 @@
 ; Comments
 
 [
-  (block_comment)
   (comment)
+  (block_comment)
 ] @comment @spell
 
 ; Errors
 
 (ERROR) @error
-
-(number) @number
-(block_comment) @comment
