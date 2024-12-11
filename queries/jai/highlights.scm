@@ -6,13 +6,21 @@
 ] @include
 
 ; Keywords
-; TODO : complete this list
 [
   "struct"
   "enum"
+  "enum_flags"
+  "if"
+  "ifx"
+  "else"
+  "case"
+  "for"
+  "while"
+  "break"
+  "continue"
   "defer"
-  ;"cast"
-  ;"xx"
+  "cast"
+  "xx"
 ] @keyword
 
 [
@@ -38,14 +46,20 @@
 
 [
   "for"
-  ;"do" I'm not sure jai has do ?
   "while"
   "continue"
 ] @repeat
 
 ; Variables
 
-(identifier) @variable
+; (identifier) @variable
+name: (identifier) @variable
+argument: (identifier) @variable
+named_argument: (identifier) @variable
+
+
+((identifier) @variable.builtin
+  (#any-of? @variable.builtin "context"))
 
 ; Namespaces
 
@@ -55,13 +69,9 @@
 
 (parameter (identifier) @parameter ":" "="? (identifier)? @constant)
 
-(default_parameter (identifier) @parameter ":=")
-
-(call_expression argument: (identifier) @parameter "=")
+; (call_expression argument: (identifier) @parameter "=")
 
 ; Functions
-
-(procedure_declaration (identifier) @type)
 
 (procedure_declaration (identifier) @function (procedure (block)))
 
@@ -69,47 +79,42 @@
 
 ; Types
 
-(type (identifier) @type)
+type: (types) @type
+type: (identifier) @type
+((types) @type)
 
-((type (identifier) @type.builtin)
+modifier: (identifier) @keyword
+keyword: (identifier) @keyword
+
+((types (identifier) @type.builtin)
   (#any-of? @type.builtin
-    "bool"
-    "int" "s8" "s16" "s32" "s64"
+    "bool" "int" "string"
+    "s8" "s16" "s32" "s64"
     "u8" "u16" "u32" "u64"
-    "string"))
+    "Type" "Any"))
 
+(struct_declaration (identifier) @type ":" ":")
 
-(struct_declaration (identifier) @type "::")
+(enum_declaration (identifier) @type ":" ":")
 
-(enum_declaration (identifier) @type "::")
+(const_declaration (identifier) @type ":" ":" [(array_type) (pointer_type)])
 
-;(union_declaration (identifier) @type "::")
+(struct_literal . (identifier) @type)
+(array_literal . (identifier) @type)
 
-(const_declaration (identifier) @type "::" [(array_type) (pointer_type)])
-
-(struct . (identifier) @type)
-
-;(field_type . (identifier) @namespace "." (identifier) @type)
-
-;(bit_set_type (identifier) @type ";")
-
-;(procedure_type (parameters (parameter (identifier) @type)))
-
-;(polymorphic_parameters (identifier) @type)
-
-((identifier) @type
-  (#lua-match? @type "^[A-Z][a-zA-Z0-9]*$")
-  (#not-has-parent? @type parameter procedure_declaration call_expression))
+; ; I don't like this
+; ((identifier) @type
+;   (#lua-match? @type "^[A-Z][a-zA-Z0-9]*$")
+;   (#not-has-parent? @type parameter procedure_declaration call_expression))
 
 ; Fields
 
 (member_expression "." (identifier) @field)
 
-;(struct_type "{" (identifier) @field)
+; (anonymous_struct_type "{" (identifier) @field)
 
-(struct_field (identifier) @field "="?)
-
-(field (identifier) @field)
+(assignment_statement (identifier) @field "="?)
+(update_statement (identifier) @field)
 
 ; Constants
 
@@ -123,9 +128,8 @@
 
 ; Literals
 
-(number) @number
-
-(float) @float
+(integer) @number
+(float) @number
 
 (string) @string
 
@@ -140,33 +144,30 @@
   (null)
 ] @constant.builtin
 
-((identifier) @variable.builtin
-  (#any-of? @variable.builtin "context"))
-
 ; Operators
 
 [
-  ":="
+  ":"
   "="
   "+"
   "-"
   "*"
   "/"
   "%"
-  "%%"
   ">"
   ">="
   "<"
   "<="
   "=="
   "!="
-  "~="
   "|"
   "~"
   "&"
   "&~"
   "<<"
   ">>"
+  "<<<"
+  ">>>"
   "||"
   "&&"
   "!"
@@ -181,12 +182,10 @@
   "^="
   "<<="
   ">>="
+  "<<<="
+  ">>>="
   "||="
   "&&="
-  "&~="
-  ;"..="
-  ;"..<"
-  ;"?"
 ] @operator
 
 ; Punctuation
@@ -198,7 +197,6 @@
 [ "[" "]" ] @punctuation.bracket
 
 [
-  "::"
   "->"
   "."
   ","
@@ -209,10 +207,12 @@
 ; Comments
 
 [
-  (comment)
   (block_comment)
+  (comment)
 ] @comment @spell
 
 ; Errors
 
 (ERROR) @error
+
+(block_comment) @comment
