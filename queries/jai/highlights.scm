@@ -5,12 +5,18 @@
   "#load"
 ] @include
 
+
 ; Keywords
 [
+  "inline"
+  "no_inline"
   "struct"
+  "union"
+  "using"
   "enum"
   "enum_flags"
   "if"
+  "then"
   "ifx"
   "else"
   "case"
@@ -18,6 +24,7 @@
   "while"
   "break"
   "continue"
+  "remove"
   "defer"
   "cast"
   "xx"
@@ -56,7 +63,7 @@
 name: (identifier) @variable
 argument: (identifier) @variable
 named_argument: (identifier) @variable
-
+(member_expression (identifier) @variable)
 
 ((identifier) @variable.builtin
   (#any-of? @variable.builtin "context"))
@@ -73,7 +80,8 @@ named_argument: (identifier) @variable
 
 ; Functions
 
-(procedure_declaration (identifier) @function (procedure (block)))
+; (procedure_declaration (identifier) @function (procedure (block)))
+(procedure_declaration (identifier) @function (block))
 
 (call_expression function: (identifier) @function.call)
 
@@ -97,7 +105,7 @@ keyword: (identifier) @keyword
 
 (enum_declaration (identifier) @type ":" ":")
 
-(const_declaration (identifier) @type ":" ":" [(array_type) (pointer_type)])
+; (const_declaration (identifier) @type ":" ":" [(array_type) (pointer_type)])
 
 (struct_literal . (identifier) @type)
 (array_literal . (identifier) @type)
@@ -135,7 +143,7 @@ keyword: (identifier) @keyword
 
 ;(character) @character
 
-(escape_sequence) @string.escape
+(string (escape_sequence) @string.escape)
 
 (boolean) @boolean
 
@@ -197,6 +205,7 @@ keyword: (identifier) @keyword
 [ "[" "]" ] @punctuation.bracket
 
 [
+  "`"
   "->"
   "."
   ","
@@ -216,3 +225,9 @@ keyword: (identifier) @keyword
 (ERROR) @error
 
 (block_comment) @comment
+
+(compiler_directive) @keyword
+(heredoc_start) @none
+(heredoc_end) @none
+(heredoc_body) @string
+
